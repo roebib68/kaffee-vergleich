@@ -53,16 +53,21 @@ for (const k of kaffees) {
 
 const liste = kaffees.filter(k => k.kilo !== null);
 liste.sort((a, b) => a.kilo - b.kilo);
-
 // --- Auswertung: günstigster Kaffee je Land ---
-// Land = letzter Teil der Herkunft (bei "Huila, Kolumbien" -> Kolumbien).
-// Mehrfach-Herkünfte mit ";" (Blends) werden in einzelne Länder zerlegt.
+// Nutzt die Spalte "Land" wenn vorhanden, sonst die Herkunft-Heuristik.
+function landVon(k) {
+  const landSpalte = spalte(k, "Land");
+  if (landSpalte && landSpalte.trim()) {
+    return landSpalte.split(";").map(t => t.trim()).filter(Boolean);
+  }
+  // Fallback: letzter Teil der Herkunft
+  return k.herkunft.split(";").map(t => t.trim()).filter(Boolean)
+    .map(teil => teil.split(",").pop().trim());
+}
+
 const laender = {};
 for (const k of liste) {
-  const teile = k.herkunft.split(";").map(t => t.trim()).filter(Boolean);
-  for (const teil of teile) {
-    const stuecke = teil.split(",");
-    const land = stuecke[stuecke.length - 1].trim();
+  for (const land of landVon(k)) {
     if (!land || /nicht|wechselnd|ausgewiesen/i.test(land)) continue;
     if (!laender[land] || k.kilo < laender[land].kilo) {
       laender[land] = { kilo: k.kilo, produkt: k.produkt, roesterei: k.roesterei };
