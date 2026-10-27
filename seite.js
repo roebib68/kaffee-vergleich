@@ -1,3 +1,4 @@
+const port = process.env.PORT || 3000;
 const http = require("http");
 
 const kaffees = [
@@ -44,6 +45,6 @@ const html = `
 http.createServer((req, res) => {
   res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
   res.end(html);
-}).listen(3000);
+}).listen(port);
 
 console.log("Seite läuft. Öffne: http://localhost:3000");
