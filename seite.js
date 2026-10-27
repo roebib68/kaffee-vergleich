@@ -1,12 +1,32 @@
 const http = require("http");
 const fs = require("fs");
 
-// CSV lesen – deine Datei ist TAB-getrennt, nicht kommagetrennt
-const roh = fs.readFileSync("kaffees.csv", "utf-8");
-const zeilen = roh.trim().split("\n");
-const header = zeilen[0].split("\t");
+// CSV lesen, BOM entfernen, tab- oder semikolon-getrennt
+let roh = fs.readFileSync("kaffees.csv", "utf-8").replace(/^\uFEFF/, "");
+const zeilen = roh.trim().split(/\r?\n/);
+
+// Parser, der Semikolons in Anführungszeichen NICHT als Trennzeichen zählt
+function parseZeile(zeile) {
+  const felder = [];
+  let feld = "", inAnfuehrung = false;
+  for (let i = 0; i < zeile.length; i++) {
+    const c = zeile[i];
+    if (c === '"') {
+      if (inAnfuehrung && zeile[i + 1] === '"') { feld += '"'; i++; }
+      else inAnfuehrung = !inAnfuehrung;
+    } else if (c === ";" && !inAnfuehrung) {
+      felder.push(feld); feld = "";
+    } else {
+      feld += c;
+    }
+  }
+  felder.push(feld);
+  return felder;
+}
+
+const header = parseZeile(zeilen[0]);
 const kaffees = zeilen.slice(1).map(zeile => {
-  const werte = zeile.split("\t");
+  const werte = parseZeile(zeile);
   const obj = {};
   header.forEach((h, i) => obj[h] = werte[i]);
   return obj;
@@ -25,10 +45,7 @@ for (const k of kaffees) {
   k.preis = zahl(k["Preis (€)"]);
 }
 
-// Kaffees ohne Preis aussortieren
 const liste = kaffees.filter(k => k.kilo !== null);
-
-// Sortieren nach €/kg
 liste.sort((a, b) => a.kilo - b.kilo);
 
 let zeilenHtml = "";
