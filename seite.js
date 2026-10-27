@@ -1,54 +1,52 @@
 const http = require("http");
-const kaffees = const http = require("http");
 const fs = require("fs");
 
-// CSV lesen und parsen
+// CSV lesen – deine Datei ist TAB-getrennt, nicht kommagetrennt
 const roh = fs.readFileSync("kaffees.csv", "utf-8");
 const zeilen = roh.trim().split("\n");
-const header = zeilen[0].split(",");
+const header = zeilen[0].split("\t");
 const kaffees = zeilen.slice(1).map(zeile => {
-  const werte = zeile.split(",");
+  const werte = zeile.split("\t");
   const obj = {};
   header.forEach((h, i) => obj[h] = werte[i]);
   return obj;
 });
 
-// Zahlen konvertieren (CSV liefert alles als Text)
-for (const k of kaffees) {
-  k.preis = parseFloat(k.preis);
-  k.gewicht = parseFloat(k.gewicht);
+// Zahlen sauber machen: "16,40 €" -> 16.40, "250 g" -> 250
+function zahl(text) {
+  if (!text) return null;
+  const n = parseFloat(text.replace(/\s*€/g, "").replace(/\s*g/g, "").replace(",", "."));
+  return isNaN(n) ? null : n;
 }
 
-const port = process.env.PORT || 3000;
-const heute = new Date("2026-10-27");
-
 for (const k of kaffees) {
-  k.kiloPreis = k.preis / (k.gewicht / 1000);
-  if (k.roestdatum !== "unbekannt") {
-    const tage = Math.round((heute - new Date(k.roestdatum)) / 86400000);
-    k.frisch = tage <= 28 ? "frisch" : "alt";
-  } else {
-    k.frisch = "???";
-  }
+  k.kilo = zahl(k["Preis je kg (€)"]);
+  k.gewicht = zahl(k["Packungsgröße (g)"]);
+  k.preis = zahl(k["Preis (€)"]);
 }
 
-kaffees.sort((a, b) => a.kiloPreis - b.kiloPreis);
+// Kaffees ohne Preis aussortieren
+const liste = kaffees.filter(k => k.kilo !== null);
+
+// Sortieren nach €/kg
+liste.sort((a, b) => a.kilo - b.kilo);
 
 let zeilenHtml = "";
-for (const k of kaffees) {
+for (const k of liste) {
   zeilenHtml += "<tr>"
-    + "<td>" + k.kiloPreis.toFixed(2) + " €</td>"
-    + "<td>" + k.roesterei + "</td>"
-    + "<td>" + k.herkunft + "</td>"
-    + "<td>" + k.roestgrad + "</td>"
-    + "<td>" + k.frisch + "</td>"
+    + "<td>" + k.kilo.toFixed(2) + " €</td>"
+    + "<td>" + k["Rösterei"] + "</td>"
+    + "<td>" + k["Produkt"] + "</td>"
+    + "<td>" + k["Herkunft"] + "</td>"
+    + "<td>" + k["Verfügbarkeit"] + "</td>"
     + "</tr>";
 }
 
 const html = `
   <h1>Kaffee sortiert nach €/kg</h1>
+  <p>${liste.length} Kaffees</p>
   <table border="1" cellpadding="8" cellspacing="0">
-    <tr><th>€/kg</th><th>Rösterei</th><th>Herkunft</th><th>Röstgrad</th><th>Frische</th></tr>
+    <tr><th>€/kg</th><th>Rösterei</th><th>Produkt</th><th>Herkunft</th><th>Verfügbarkeit</th></tr>
     ${zeilenHtml}
   </table>
 `;
@@ -56,43 +54,4 @@ const html = `
 http.createServer((req, res) => {
   res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
   res.end(html);
-}).listen(port);;
-
-const port = process.env.PORT || 3000;
-const heute = new Date("2026-10-27");
-
-for (const k of kaffees) {
-  k.kiloPreis = k.preis / (k.gewicht / 1000);
-  if (k.roestdatum !== "unbekannt") {
-    const tage = Math.round((heute - new Date(k.roestdatum)) / 86400000);
-    k.frisch = tage <= 28 ? "frisch" : "alt";
-  } else {
-    k.frisch = "???";
-  }
-}
-
-kaffees.sort((a, b) => a.kiloPreis - b.kiloPreis);
-
-let zeilen = "";
-for (const k of kaffees) {
-  zeilen += "<tr>"
-    + "<td>" + k.kiloPreis.toFixed(2) + " €</td>"
-    + "<td>" + k.roesterei + "</td>"
-    + "<td>" + k.herkunft + "</td>"
-    + "<td>" + k.roestgrad + "</td>"
-    + "<td>" + k.frisch + "</td>"
-    + "</tr>";
-}
-
-const html = `
-  <h1>Kaffee sortiert nach €/kg</h1>
-  <table border="1" cellpadding="8" cellspacing="0">
-    <tr><th>€/kg</th><th>Rösterei</th><th>Herkunft</th><th>Röstgrad</th><th>Frische</th></tr>
-    ${zeilen}
-  </table>
-`;
-
-http.createServer((req, res) => {
-  res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
-  res.end(html);
-}).listen(port);
+}).listen(process.env.PORT || 3000);
