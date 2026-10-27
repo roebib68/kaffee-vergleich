@@ -1,11 +1,11 @@
 const http = require("http");
 const fs = require("fs");
 
-// CSV lesen, BOM entfernen, tab- oder semikolon-getrennt
-let roh = fs.readFileSync("kaffees.csv", "utf-8").replace(/^\uFEFF/, "");
+// CSV lesen (latin1 = Windows-Format), BOM entfernen
+let roh = fs.readFileSync("kaffees.csv", "latin1").replace(/^\uFEFF/, "");
 const zeilen = roh.trim().split(/\r?\n/);
 
-// Parser, der Semikolons in Anführungszeichen NICHT als Trennzeichen zählt
+// Parser: Semikolons in Anführungszeichen werden NICHT getrennt
 function parseZeile(zeile) {
   const felder = [];
   let feld = "", inAnfuehrung = false;
@@ -32,6 +32,14 @@ const kaffees = zeilen.slice(1).map(zeile => {
   return obj;
 });
 
+// Spalte finden, deren Name ein Suchwort enthält (egal ob € kaputt ist)
+function spalte(obj, suchwort) {
+  for (const name of Object.keys(obj)) {
+    if (name.includes(suchwort)) return obj[name];
+  }
+  return null;
+}
+
 // Zahlen sauber machen: "16,40 €" -> 16.40, "250 g" -> 250
 function zahl(text) {
   if (!text) return null;
@@ -40,9 +48,9 @@ function zahl(text) {
 }
 
 for (const k of kaffees) {
-  k.kilo = zahl(k["Preis je kg (€)"]);
-  k.gewicht = zahl(k["Packungsgröße (g)"]);
-  k.preis = zahl(k["Preis (€)"]);
+  k.kilo = zahl(spalte(k, "Preis je kg"));
+  k.gewicht = zahl(spalte(k, "Packungsgröße"));
+  k.preis = zahl(spalte(k, "Preis ("));
 }
 
 const liste = kaffees.filter(k => k.kilo !== null);
