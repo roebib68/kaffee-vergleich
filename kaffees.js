@@ -12,6 +12,7 @@ const kaffees = [
   { name: "Bio Filter",    roesterei: "Bohnenreich",    herkunft: "Kolumbien", roestgrad: "hell",   roestdatum: "2026-10-18", gewicht: 250,  preis: 7.50 },
   { name: "Espresso D.",   roesterei: "MyCoffeeDealer", herkunft: "unbekannt", roestgrad: "dunkel", roestdatum: "unbekannt",  gewicht: 1000, preis: 24.90 },
   { name: "Espresso",      roesterei: "Happy Coffee",   herkunft: "Äthiopien", roestgrad: "mittel", roestdatum: "2026-10-10", gewicht: 1000, preis: 17.90 },
+  { name: "Waldgeist", roesterei: "schnorch", herkunft: "auenland", roestgrad: "hell", roestdatum: "2026-10-24", gewicht: 250, preis: 22.00 },
   { name: "Passalacqua",   roesterei: "Passalacqua",    herkunft: "Blend",     roestgrad: "dunkel", roestdatum: "unbekannt",  gewicht: 1000, preis: 29.00 },
 ];
 
