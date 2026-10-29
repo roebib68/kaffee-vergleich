@@ -168,6 +168,17 @@ const html = `<!DOCTYPE html>
   .count { color: var(--text); font-weight: 600; margin: 0 0 14px; }
   .scroll { overflow-x: auto; }
   footer { text-align: center; opacity: .6; font-size: .8rem; padding: 20px; }
+  .more-tools {
+    display: inline-flex; align-items: center; gap: 8px;
+    margin: 8px auto 0; padding: 12px 20px;
+    border: 1px solid var(--gold); border-radius: 10px;
+    background: var(--panel); color: var(--gold);
+    font-weight: 700; text-decoration: none;
+  }
+  .more-tools:hover, .more-tools:focus, .more-tools:focus-visible {
+    background: rgba(212,175,55,.12); outline: 2px solid var(--gold); outline-offset: 2px;
+  }
+  .more-tools .go { color: var(--text); }
 </style>
 </head>
 <body>
@@ -211,7 +222,9 @@ const html = `<!DOCTYPE html>
     </table>
   </div>
 </main>
-<footer>Kaffee-Vergleich · Preise Stand 27.10.2026</footer>
+<div style="text-align:center">
+  <a class="more-tools" href="https://nuetzlicheundkleinetools.de/">Tools die es auch noch gibt <span class="go">↗</span></a>
+</div>
 <script>
   const suche = document.getElementById("suche");
   const roesterei = document.getElementById("roesterei");
