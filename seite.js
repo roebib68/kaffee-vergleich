@@ -240,10 +240,6 @@ const html = `<!DOCTYPE html>
     <a href="https://nuetzlicheundkleinetools.de/impressum.html">Impressum</a>
     <span class="footer-sep">·</span>
     <a href="https://nuetzlicheundkleinetools.de/datenschutz.html">Datenschutz</a>
-    <span class="footer-sep">·</span>
-    <a href="https://nuetzlicheundkleinetools.de/nutzungsbedingungen.html">Nutzungsbedingungen</a>
-    <span class="footer-sep">·</span>
-    <a href="https://nuetzlicheundkleinetools.de/hinweise.html">Hinweise</a>
   </div>
   <p class="footer-copy">© 2026 nuetzlicheundkleinetools.de</p>
   <p class="footer-copy">Weitere Tools folgen bald</p>
