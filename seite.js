@@ -179,6 +179,16 @@ const html = `<!DOCTYPE html>
     background: rgba(212,175,55,.12); outline: 2px solid var(--gold); outline-offset: 2px;
   }
   .more-tools .go { color: var(--text); }
+  .site-footer {
+    text-align: center; padding: 28px 16px 40px;
+    border-top: 1px solid var(--line); margin-top: 8px;
+    font-size: .82rem; opacity: .85;
+  }
+  .footer-links { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-bottom: 10px; }
+  .footer-links a { color: var(--gold); text-decoration: none; }
+  .footer-links a:hover, .footer-links a:focus, .footer-links a:focus-visible { text-decoration: underline; outline: none; }
+  .footer-sep { color: var(--text); opacity: .5; }
+  .footer-copy { margin: 4px 0 0; }
 </style>
 </head>
 <body>
@@ -225,6 +235,19 @@ const html = `<!DOCTYPE html>
 <div style="text-align:center">
   <a class="more-tools" href="https://nuetzlicheundkleinetools.de/">Tools die es auch noch gibt <span class="go">↗</span></a>
 </div>
+<footer class="site-footer">
+  <div class="footer-links">
+    <a href="https://nuetzlicheundkleinetools.de/impressum.html">Impressum</a>
+    <span class="footer-sep">·</span>
+    <a href="https://nuetzlicheundkleinetools.de/datenschutz.html">Datenschutz</a>
+    <span class="footer-sep">·</span>
+    <a href="https://nuetzlicheundkleinetools.de/nutzungsbedingungen.html">Nutzungsbedingungen</a>
+    <span class="footer-sep">·</span>
+    <a href="https://nuetzlicheundkleinetools.de/hinweise.html">Hinweise</a>
+  </div>
+  <p class="footer-copy">© 2026 nuetzlicheundkleinetools.de</p>
+  <p class="footer-copy">Weitere Tools folgen bald</p>
+</footer>
 <script>
   const suche = document.getElementById("suche");
   const roesterei = document.getElementById("roesterei");
