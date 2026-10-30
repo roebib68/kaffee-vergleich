@@ -241,7 +241,7 @@ const html = `<!DOCTYPE html>
     <span class="footer-sep">·</span>
     <a href="https://nuetzlicheundkleinetools.de/datenschutz.html">Datenschutz</a>
   </div>
-  <p class="footer-copy">© 2026 nuetzlicheundkleinetools.de</p>
+  <p class="footer-copy">   © 2026 Robert Rössler – Nützliche &amp; kleine Tools.   Alle Rechte vorbehalten. </p>
   <p class="footer-copy">Weitere Tools folgen bald</p>
 </footer>
 <script>
