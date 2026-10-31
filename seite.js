@@ -1,3 +1,4 @@
+
 const http = require("http");
 const fs = require("fs");
 
@@ -156,16 +157,22 @@ const html = `<!DOCTYPE html>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Kaffee-Vergleich</title>
+<meta name="theme-color" content="#10272d">
+<meta name="description" content="Kaffee-Vergleich nach Preis pro Kilogramm. Vergleiche Röstereien, Produkte, Herkunft und Verfügbarkeit.">
+<title>Kaffee-Vergleich | Nützliche & kleine Tools</title>
 
 <style>
   :root {
-    /* >>> HIER deine 3 exakten Farben eintragen <<< */
-    --bg: #0d2818;
-    --text: #b6f0c2;
-    --gold: #d4af37;
-    --panel: #10301f;
-    --line: rgba(212,175,55,.35);
+    color-scheme: dark;
+    --bg: #10272d;
+    --panel: #18343a;
+    --soft: #1d4147;
+    --line: #396168;
+    --ink: #e6f4f1;
+    --muted: #b3cecb;
+    --accent: #2dd4bf;
+    --warn: #fbbf24;
+    --bad: #fb7185;
   }
 
   * {
@@ -176,13 +183,13 @@ const html = `<!DOCTYPE html>
     font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
     margin: 0;
     background: var(--bg);
-    color: var(--text);
+    color: var(--ink);
     line-height: 1.5;
   }
 
   header {
     background: var(--panel);
-    border-bottom: 2px solid var(--gold);
+    border-bottom: 2px solid var(--accent);
     padding: 32px 20px;
     text-align: center;
   }
@@ -190,12 +197,12 @@ const html = `<!DOCTYPE html>
   header h1 {
     margin: 0;
     font-size: 1.8rem;
-    color: var(--gold);
+    color: var(--accent);
   }
 
   header p {
     margin: 6px 0 0;
-    opacity: .8;
+    color: var(--muted);
   }
 
   main {
@@ -214,20 +221,30 @@ const html = `<!DOCTYPE html>
   .toolbar input,
   .toolbar select {
     padding: 9px 12px;
-    border: 1px solid var(--gold);
+    border: 1px solid var(--line);
     border-radius: 8px;
     font-size: .95rem;
     background: var(--panel);
-    color: var(--text);
+    color: var(--ink);
   }
 
   .toolbar input {
     flex: 1 1 220px;
   }
 
+  .toolbar input:focus,
+  .toolbar select:focus {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  .toolbar input::placeholder {
+    color: var(--muted);
+  }
+
   .card {
     background: var(--panel);
-    border: 1px solid var(--gold);
+    border: 1px solid var(--line);
     border-radius: 12px;
     overflow: hidden;
     margin-bottom: 36px;
@@ -247,8 +264,8 @@ const html = `<!DOCTYPE html>
   }
 
   thead th {
-    background: rgba(212,175,55,.12);
-    color: var(--gold);
+    background: var(--soft);
+    color: var(--accent);
     cursor: pointer;
     user-select: none;
     position: sticky;
@@ -257,16 +274,16 @@ const html = `<!DOCTYPE html>
   }
 
   thead th:hover {
-    background: rgba(212,175,55,.22);
+    background: #285158;
   }
 
   tbody tr:hover {
-    background: rgba(212,175,55,.08);
+    background: rgba(45, 212, 191, .08);
   }
 
   .preis {
     font-weight: 600;
-    color: var(--gold);
+    color: var(--accent);
     white-space: nowrap;
   }
 
@@ -280,25 +297,25 @@ const html = `<!DOCTYPE html>
   }
 
   .badge.ok {
-    background: rgba(120,220,140,.18);
-    color: #8fe3a3;
-    border: 1px solid #8fe3a3;
+    background: rgba(45, 212, 191, .13);
+    color: #5eead4;
+    border: 1px solid #2dd4bf;
   }
 
   .badge.out {
-    background: rgba(230,120,120,.15);
-    color: #e89a9a;
-    border: 1px solid #e89a9a;
+    background: rgba(251, 113, 133, .13);
+    color: #fda4af;
+    border: 1px solid #fb7185;
   }
 
   h2 {
-    color: var(--gold);
+    color: var(--accent);
     margin: 0 0 14px;
     font-size: 1.25rem;
   }
 
   .count {
-    color: var(--text);
+    color: var(--ink);
     font-weight: 600;
     margin: 0 0 14px;
   }
@@ -309,7 +326,7 @@ const html = `<!DOCTYPE html>
 
   footer {
     text-align: center;
-    opacity: .6;
+    color: var(--muted);
     font-size: .8rem;
     padding: 20px;
   }
@@ -320,10 +337,10 @@ const html = `<!DOCTYPE html>
     gap: 8px;
     margin: 8px auto 0;
     padding: 12px 20px;
-    border: 1px solid var(--gold);
+    border: 1px solid var(--accent);
     border-radius: 10px;
     background: var(--panel);
-    color: var(--gold);
+    color: var(--accent);
     font-weight: 700;
     text-decoration: none;
   }
@@ -331,13 +348,13 @@ const html = `<!DOCTYPE html>
   .more-tools:hover,
   .more-tools:focus,
   .more-tools:focus-visible {
-    background: rgba(212,175,55,.12);
-    outline: 2px solid var(--gold);
+    background: rgba(45, 212, 191, .12);
+    outline: 2px solid var(--accent);
     outline-offset: 2px;
   }
 
   .more-tools .go {
-    color: var(--text);
+    color: var(--ink);
   }
 
   .site-footer {
@@ -346,7 +363,7 @@ const html = `<!DOCTYPE html>
     border-top: 1px solid var(--line);
     margin-top: 8px;
     font-size: .82rem;
-    opacity: .85;
+    color: var(--muted);
   }
 
   .footer-links {
@@ -358,7 +375,7 @@ const html = `<!DOCTYPE html>
   }
 
   .footer-links a {
-    color: var(--gold);
+    color: var(--accent);
     text-decoration: none;
   }
 
@@ -370,12 +387,35 @@ const html = `<!DOCTYPE html>
   }
 
   .footer-sep {
-    color: var(--text);
-    opacity: .5;
+    color: var(--muted);
+    opacity: .7;
   }
 
   .footer-copy {
     margin: 4px 0 0;
+  }
+
+  @media (max-width: 650px) {
+    header {
+      padding: 25px 16px;
+    }
+
+    header h1 {
+      font-size: 1.5rem;
+    }
+
+    main {
+      padding: 20px 12px 40px;
+    }
+
+    th,
+    td {
+      padding: 9px 11px;
+    }
+
+    table {
+      font-size: .85rem;
+    }
   }
 </style>
 </head>
